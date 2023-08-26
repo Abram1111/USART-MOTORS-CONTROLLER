@@ -7,7 +7,6 @@
 #include <Dio.h>
 #include "cpu_freq.h"
 #include <Pwm.h>
-
 #include <Data.h>
 #include <Motors.h>
 void Motors_Init(void)//initialize dc motor

@@ -30,7 +30,7 @@ volatile u8 g_data = 0;
 volatile u8 received_flag = 0;
 volatile u8 SecondFlag = 0;
 volatile u16 timerCounter = 0;
-volatile u8 frameCounter = 0;
+
 /********************************************************************************************************/
 
 /********************************************************************************************************/
@@ -38,7 +38,7 @@ volatile u8 frameCounter = 0;
 /********************************************************************************************************/
 void TimerHandeler()
 {
-	
+
 	timerCounter++;//overflow every 250 micro second
 	
 	if (timerCounter == 4000)//one 1 second every 4000 overflow
@@ -63,6 +63,7 @@ int main(void)
 		u8 Hour = 0;
 	/*******************/
 	u8 validation = 0;
+	u8 frameCounter = 0;
 	Data_Type data;
     /* Initialisation */
 	Lcd_Init();
@@ -72,8 +73,12 @@ int main(void)
 	Gie_Enable();
 	/*******************/
 	Lcd_DisplayClear();
-	Lcd_SetCursorPosition(1, 1);
+	Lcd_SetCursorPosition(0, 4);
+	Lcd_DisplayString((u8*)"Speed: 0%  Dirction: 0");
+	Lcd_SetCursorPosition(1, 6);
 	Lcd_DisplayString((u8 *)"Time:00:00:00AM");
+
+
 	Gpt_EnableNotification(GPT_INT_SOURCE_TIM0_COMP, TimerHandeler); // enable timer interrupt
 	Gpt_Start(GPT_CHANNEL_TIM0, 250); // start timer with 250 micro second
 	Usart_EnableNotification(USART_INT_SOURCE_RX); // enable usart receve interrupt
@@ -112,14 +117,20 @@ int main(void)
 				if (validation == DATA_VALID_FRAME)//check if frame is valid
 				{
 					Lcd_ClearRow(0);//clear first row
-					Lcd_SetCursorPosition(0, 0);//set cursor position
+					Lcd_SetCursorPosition(0, 4);//set cursor position
 					Motors_Handeler(&data);//handle data
-					Lcd_Print((u8 *)"Speed:%d dir:%d", data.speed, data.Servo_Angle);//display speed and  angle on lcd
+					if(data.Servo_Dirction==DATA_DIRCTION_LEFT){
+						Lcd_Print((u8 *)"Speed: %d%%  Dirction: -%d", data.speed, data.Servo_Angle);//display speed and  angle on lcd
+					}
+					else {
+						Lcd_Print((u8 *)"Speed: %d%%  Dirction: %d", data.speed, data.Servo_Angle);//display speed and  angle on lcd
+					}
+
 				}
 				else
 				{
 					Lcd_ClearRow(0);//clear first row
-					Lcd_SetCursorPosition(0, 0);	//set cursor position
+					Lcd_SetCursorPosition(0, 6);	//set cursor position
 					Lcd_DisplayString((u8 *)"Invalid Frame");//display invalid frame on lcd
 				}
 			}

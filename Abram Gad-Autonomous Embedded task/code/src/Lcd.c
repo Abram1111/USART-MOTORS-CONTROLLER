@@ -286,7 +286,7 @@ void Lcd_Print(const u8 *str, ...)
 void Lcd_ClearRow(u8 row)
 {
     Lcd_SetCursorPosition(row, 0);
-    for (u8 i = 0; i < 16; i++)
+    for (u8 i = 0; i <40; i++)
     {
         Lcd_SendData(' ');
     }
@@ -294,7 +294,7 @@ void Lcd_ClearRow(u8 row)
 
 void Lcd_TimerDisplay(u8 hours, u8 minute, u8 second)
 {
-    Lcd_SetCursorPosition(1, 1);
+    Lcd_SetCursorPosition(1, 6);
     Lcd_Print((u8 *)"Time:");
     if (hours < 10)
     {
